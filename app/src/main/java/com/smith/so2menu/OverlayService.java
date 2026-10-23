@@ -178,13 +178,14 @@ public class OverlayService extends Service {
 
         Switch sw = new Switch(this);
         sw.setChecked(cfg.getBool(key));
-        sw.getThumbDrawable().setTint(Color.parseColor("#3B82F6"));
-        sw.getTrackDrawable().setTint(Color.parseColor(sw.isChecked() ? "#1E3A8A" : "#1F2937"));
+        
+        if (sw.getThumbDrawable() != null) sw.getThumbDrawable().setTint(Color.parseColor("#3B82F6"));
+        if (sw.getTrackDrawable() != null) sw.getTrackDrawable().setTint(Color.parseColor(sw.isChecked() ? "#1E3A8A" : "#1F2937"));
         
         sw.setOnCheckedChangeListener((b, checked) -> {
             cfg.setBool(key, checked);
             HookBridge.setToggle(key, checked);
-            sw.getTrackDrawable().setTint(Color.parseColor(checked ? "#1E3A8A" : "#1F2937"));
+            if (sw.getTrackDrawable() != null) sw.getTrackDrawable().setTint(Color.parseColor(checked ? "#1E3A8A" : "#1F2937"));
         });
 
         row.addView(tv); row.addView(sw); content.addView(row);
@@ -211,6 +212,39 @@ public class OverlayService extends Service {
 
         SeekBar bar = new SeekBar(this);
         bar.setMax(max - min); bar.setProgress(cur - min);
+        
+        if (bar.getProgressDrawable() != null) bar.getProgressDrawable().setTint(Color.parseColor("#3B82F6"));
+        if (bar.getThumb() != null) bar.getThumb().setTint(Color.parseColor("#3B82F6"));
+        
+        bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override public void onProgressChanged(SeekBar sb, int p, boolean fromUser) {
+                int v = min + p; val.setText(String.valueOf(v));
+                if (fromUser) { cfg.setInt(key, v); HookBridge.setInt(key, v); }
+            }
+            @Override public void onStartTrackingTouch(SeekBar sb) {}
+            @Override public void onStopTrackingTouch(SeekBar sb) {}
+        });
+
+        col.addView(head); col.addView(bar); content.addView(col);
+    }
+
+    private GradientDrawable roundRect(String fill, String stroke, int strokeDp, int radiusDp) {
+        GradientDrawable d = new GradientDrawable();
+        d.setColor(Color.parseColor(fill));
+        d.setCornerRadius(radiusDp * getResources().getDisplayMetrics().density);
+        if (strokeDp > 0) d.setStroke(strokeDp, Color.parseColor(stroke));
+        return d;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (panel != null && wm != null) wm.removeView(panel);
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) { return null; }
+}        bar.setMax(max - min); bar.setProgress(cur - min);
         bar.getProgressDrawable().setTint(Color.parseColor("#3B82F6"));
         bar.getThumb().setTint(Color.parseColor("#3B82F6"));
         bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
