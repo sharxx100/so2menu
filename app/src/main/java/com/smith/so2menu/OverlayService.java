@@ -244,35 +244,4 @@ public class OverlayService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) { return null; }
-}        bar.setMax(max - min); bar.setProgress(cur - min);
-        bar.getProgressDrawable().setTint(Color.parseColor("#3B82F6"));
-        bar.getThumb().setTint(Color.parseColor("#3B82F6"));
-        bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override public void onProgressChanged(SeekBar sb, int p, boolean fromUser) {
-                int v = min + p; val.setText(String.valueOf(v));
-                if (fromUser) { cfg.setInt(key, v); HookBridge.setInt(key, v); }
-            }
-            @Override public void onStartTrackingTouch(SeekBar sb) {}
-            @Override public void onStopTrackingTouch(SeekBar sb) {}
-        });
-
-        col.addView(head); col.addView(bar); content.addView(col);
-    }
-
-    private GradientDrawable roundRect(String fill, String stroke, int strokeDp, int radiusDp) {
-        GradientDrawable d = new GradientDrawable();
-        d.setColor(Color.parseColor(fill));
-        d.setCornerRadius(radiusDp * getResources().getDisplayMetrics().density);
-        if (strokeDp > 0) d.setStroke(strokeDp, Color.parseColor(stroke));
-        return d;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (panel != null && wm != null) wm.removeView(panel);
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) { return null; }
-          }
+}
